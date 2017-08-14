@@ -28,6 +28,7 @@
 #endregion
 
 using System;
+using System.Net;
 using CoiniumServ.Pools;
 using CSRedis;
 using Serilog;
@@ -58,15 +59,21 @@ namespace CoiniumServ.Persistance.Providers.Redis
         {
             try
             {
+                // for mono compatibility, we need to define an endpoint.
+                //var endpoint = new IPEndPoint(IPAddress.Parse(_config.Host), _config.Port); 
+
                 // create the connection
                 Client = new RedisClient(_config.Host, _config.Port)
                 {
                     ReconnectAttempts = 3,
-                    ReconnectWait = 200
+                    ReconnectWait = 200,
+//                    ReceiveTimeout = 20000,
+//                    SendTimeout = 20000
+                    
                 };
 
                 // select the database
-                Client.Select(_config.DatabaseId);
+                //Client.Select(_config.DatabaseId.ToString);
 
                 // authenticate if needed.
                 if (!string.IsNullOrEmpty(_config.Password))
